@@ -1,0 +1,9 @@
+git branch
+read -p "Press any key to continue... " && \
+git add * && \
+echo "Please enter your commit message"
+read msg
+git commit -m "$msg" && \
+echo "Please enter the branch name"
+read msg
+git push -u origin $msg
