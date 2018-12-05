@@ -1,8 +1,12 @@
 % Innovation magnitude bound test
 % Date: 4th Dec 2018
 clc; clear; close;
-load('./plot_alldata/EnKF_stat50.mat');
-load('./plot_alldata/OT_stat50.mat');
+% load('./plot_alldata/EnKF_stat50.mat');
+% load('./plot_alldata/OT_stat50.mat');
+
+load('./plot_alldata/EnKF_stat100.mat');
+load('./plot_alldata/OT_stat100.mat');
+
 
 % Observations
 start_var;choose_jb2008;simulation_inputs 
@@ -35,7 +39,7 @@ end
 % Calculate covariance of innovation for each observation 
 cov_inovEnKF = zeros(no_obs,1); 
 for i = 1:no_obs
-    cov_inovEnKF(i,1) =  cov(innovationEnKF(i,:));
+    cov_inovEnKF(i,1) =  (1/(no_samples-1))*sum(innovationEnKF(i,:).*innovationEnKF(i,:));
 end
 sig_inovEnKF= sqrt(cov_inovEnKF);
 % Variation of inovation estimate. We use the sample estimates to
@@ -64,7 +68,7 @@ end
 % Calculate covariance of innovation for each observation 
 cov_inovOT = zeros(no_obs,1); 
 for i = 1:no_obs
-    cov_inovOT(i,1) =  cov(innovationOT(i,:));
+    cov_inovOT(i,1) =  (1/(no_samples-1))*sum(innovationOT(i,:).*innovationOT(i,:));
 end
 sig_inovOT = sqrt(cov_inovOT);
 % Variation of inovation estimate. We use the sample estimates to
@@ -79,17 +83,13 @@ end
 
 %% Plot
 figure(1);
-subplot(2,1,1)
-plot(1:no_obs,sig_inovOT); % + sig bound;
-hold on; plot(1:no_obs,-sig_inovOT); % + sig bound;
-hold on; plot(1:no_obs,2*sig_inovOT); % +2 sig bound;
+a1 = subplot(1,2,1)
+plot(1:no_obs,2*sig_inovOT); % +2 sig bound;
 hold on; plot(1:no_obs,-2*sig_inovOT); % - 2 sig bound;
-hold on; plot(1:no_obs,ot_investimate); 
-subplot(2,1,2)
-plot(1:no_obs,sig_inovEnKF); % + sig bound;
-hold on; plot(1:no_obs,-sig_inovEnKF); % + sig bound;
-hold on; plot(1:no_obs,2*sig_inovEnKF); % +2 sig bound;
+hold on; plot(1:no_obs,ot_investimate,'o'); 
+a2 = subplot(1,2,2)
+plot(1:no_obs,2*sig_inovEnKF); % +2 sig bound;
 hold on; plot(1:no_obs,-2*sig_inovEnKF); % - 2 sig bound;
-hold on; plot(1:no_obs,enkf_investimate); 
+hold on; plot(1:no_obs,enkf_investimate,'o'); 
 
-
+linkaxes([a1,a2],'xy')

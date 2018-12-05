@@ -18,8 +18,11 @@ for r = 1:no_of_repeat
         tic
         Tend =  (obs_states(m,1)-AuxParam.Mjd_UTC)*86400;
         tmp_X_init_eci_OT = zeros(6,samples); 
+        opts = sdeset('RandSeed',1);  % Set random seed
         parfor n = 1:samples
-            [~,x_temp] = radau(accel_meenew,[Tstart Tend],X_init_OT(:,n),options);
+            g = [10;10^-8;10^-8;10^-8;10^-8;0.00001];
+            x_temp = sde_euler(accel_meenew,g,[Tstart Tend],X_init_OT(:,n),options);
+%             [~,x_temp] = radau(accel_meenew,[Tstart Tend],X_init_OT(:,n),options);
             X_init_OT(:,n) = x_temp(end,:)';
         end
         current_mjdutc = AuxParam.Mjd_UTC + Tend/86400;
