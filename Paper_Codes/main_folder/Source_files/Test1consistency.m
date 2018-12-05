@@ -4,8 +4,8 @@ clc; clear; close;
 % load('./plot_alldata/EnKF_stat50.mat');
 % load('./plot_alldata/OT_stat50.mat');
 
-load('./data2_old/EnKF_stat50.mat');
-load('./data2_old/OT_stat50.mat');
+load('./data2_old/EnKF_stat100.mat');
+load('./data2_old/OT_stat100.mat');
 
 
 % Observations
@@ -96,7 +96,7 @@ ax = gca;
 ax.XTick = 1:2:no_obs;
 xlim([1 no_obs]);
 ylim([-73 73]);
-title('OT innovation','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+title('OT','FontSize',18,'interpreter', 'latex','FontWeight','bold');
 xlabel('Observations','FontSize',18,'interpreter', 'latex','FontWeight','bold');
 
 
@@ -111,7 +111,7 @@ ax = gca;
 ax.XTick = 1:2:no_obs;
 xlim([1 no_obs]);
 ylim([-73 73]);
-title('EnKF innovation','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+title('EnKF','FontSize',18,'interpreter', 'latex','FontWeight','bold');
 xlabel('Observations','FontSize',18,'interpreter', 'latex','FontWeight','bold');
 
 
@@ -129,4 +129,4 @@ fig = gcf;
 fig.PaperPositionMode = 'auto';
 fig_pos = fig.PaperPosition;
 fig.PaperSize = [fig_pos(3) fig_pos(4)];
-print(fig, '-dpdf', './consist50.pdf');
+print(fig, '-dpdf', './consist100.pdf');
