@@ -4,8 +4,8 @@ clc; clear; close;
 % load('./plot_alldata/EnKF_stat50.mat');
 % load('./plot_alldata/OT_stat50.mat');
 
-load('./plot_alldata/EnKF_stat100.mat');
-load('./plot_alldata/OT_stat100.mat');
+load('./data2_old/EnKF_stat50.mat');
+load('./data2_old/OT_stat50.mat');
 
 
 % Observations
@@ -39,7 +39,7 @@ end
 % Calculate covariance of innovation for each observation 
 cov_inovEnKF = zeros(no_obs,1); 
 for i = 1:no_obs
-    cov_inovEnKF(i,1) =  (1/(no_samples-1))*sum(innovationEnKF(i,:).*innovationEnKF(i,:));
+    cov_inovEnKF(i,1) =  (1/(no_samples))*sum(innovationEnKF(i,:).*innovationEnKF(i,:));
 end
 sig_inovEnKF= sqrt(cov_inovEnKF);
 % Variation of inovation estimate. We use the sample estimates to
@@ -68,7 +68,7 @@ end
 % Calculate covariance of innovation for each observation 
 cov_inovOT = zeros(no_obs,1); 
 for i = 1:no_obs
-    cov_inovOT(i,1) =  (1/(no_samples-1))*sum(innovationOT(i,:).*innovationOT(i,:));
+    cov_inovOT(i,1) =  (1/(no_samples))*sum(innovationOT(i,:).*innovationOT(i,:));
 end
 sig_inovOT = sqrt(cov_inovOT);
 % Variation of inovation estimate. We use the sample estimates to
@@ -83,13 +83,50 @@ end
 
 %% Plot
 figure(1);
-a1 = subplot(1,2,1)
-plot(1:no_obs,2*sig_inovOT); % +2 sig bound;
-hold on; plot(1:no_obs,-2*sig_inovOT); % - 2 sig bound;
-hold on; plot(1:no_obs,ot_investimate,'o'); 
-a2 = subplot(1,2,2)
-plot(1:no_obs,2*sig_inovEnKF); % +2 sig bound;
-hold on; plot(1:no_obs,-2*sig_inovEnKF); % - 2 sig bound;
-hold on; plot(1:no_obs,enkf_investimate,'o'); 
+% set(gcf,'position', [ 123    90   946   768]);
 
-linkaxes([a1,a2],'xy')
+a1 = subplot(2,2,1);
+h1 = plot(1:no_obs,2*sig_inovOT,'blue'); % +2 sig bound;
+h1.LineWidth = 1;
+hold on; h2 = plot(1:no_obs,-2*sig_inovOT,'blue'); % - 2 sig bound;
+h2.LineWidth = 1;
+hold on; h5 = plot(1:no_obs,ot_investimate,'black'); h5.LineWidth = 1;
+ylabel('$r_{obs}-m(\textbf{x})$ (m)','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+ax = gca;
+ax.XTick = 1:2:no_obs;
+xlim([1 no_obs]);
+ylim([-73 73]);
+title('OT innovation','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+xlabel('Observations','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+
+
+a2 = subplot(2,2,2);
+h3 = plot(1:no_obs,2*sig_inovEnKF,'blue'); % +2 sig bound;
+h3.LineWidth = 1;
+hold on; h4 = plot(1:no_obs,-2*sig_inovEnKF,'blue'); % - 2 sig bound;
+h4.LineWidth = 1;
+hold on; h6 = plot(1:no_obs,enkf_investimate,'red'); h6.LineWidth = 1;
+ylabel('$r_{obs}-m(\textbf{x})$ (m)','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+ax = gca;
+ax.XTick = 1:2:no_obs;
+xlim([1 no_obs]);
+ylim([-73 73]);
+title('EnKF innovation','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+xlabel('Observations','FontSize',18,'interpreter', 'latex','FontWeight','bold');
+
+
+hL = subplot(2,2,3.5);
+poshL = get(hL,'position'); % Getting its position
+poshL(2) = poshL(2)+ poshL(4)/2;
+lgd = legend(hL,[h5;h6;h1],'OT innovation','EnKF innovation','$\pm$ 2$\sigma$');
+set(lgd,'position',poshL,'Orientation','horizontal','FontSize',18,'interpreter', 'latex','FontWeight','bold');      % Adjusting legend's position
+axis(hL,'off');
+
+
+linkaxes([a1,a2],'xy');
+
+fig = gcf;
+fig.PaperPositionMode = 'auto';
+fig_pos = fig.PaperPosition;
+fig.PaperSize = [fig_pos(3) fig_pos(4)];
+print(fig, '-dpdf', './consist50.pdf');
